@@ -1,7 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+Kevin Savill
+12-4-2022
+CS3345
+Project 3 - Semester Project
  */
 package project3;
 
@@ -23,10 +24,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-/**
- *
- * @author kev
- */
 public class Project3 extends Application {
     
     @Override
@@ -37,72 +34,138 @@ public class Project3 extends Application {
         menuGrid.setHgap(10);
         menuGrid.setVgap(12);
         
-        // items for input method fields
+        // Main two labels that will go at top of GUI
+        Label flightDataLabel = new Label("---Flight Data---");
+        Label requestedPlansLabel = new Label("---Requested Flight Plans---");
+        
+        // repeat labels such as "Textfile" and "Paste text content here"
+        Label inputFileNameLabel = new Label("Textfile directory: ");
+        Label pasteHereLabel = new Label ("Paste text content here: ");
+        Label inputFileNameLabel2 = new Label("Textfile directory: ");
+        Label pasteHereLabel2 = new Label ("Paste text content here: ");
         Label inputMethodLabel = new Label("Input Method: ");
-        //create the RadioButton group for algorithm type to run
+        Label inputMethodLabel2 = new Label("Input Method: ");
+        
+        //input fields for Flight Data
+        
         ToggleGroup inputMethodSelection = new ToggleGroup();
-        //Insertion sort radio button
+       
         RadioButton rb1 = new RadioButton("Text File");
         rb1.setToggleGroup(inputMethodSelection);
         rb1.setSelected(true);      
-        //Selection sort radio  button
+        //radio  button
         RadioButton rb2 = new RadioButton("Pasted Text");
         rb2.setToggleGroup(inputMethodSelection);        
         
-        Label textFileLocationLabel = new Label("Textfile directory: ");
+        
         TextField textFileLocation = new TextField();
         // set the default value of the input textfield
-        textFileLocation.setText("booklist.txt");
+        textFileLocation.setText("flight_data.txt");
         
         
-        Label bookPasteLabel = new Label ("Paste text content here: ");
-        TextArea bookPaste = new TextArea();
+        TextArea flightDataTextArea = new TextArea();
+        
+        
+        
+        
+        //input fields for Requested Flight Plans
+        ToggleGroup inputMethodSelection2 = new ToggleGroup();
+       
+        RadioButton rb1_2 = new RadioButton("Text File");
+        rb1_2.setToggleGroup(inputMethodSelection2);
+        rb1_2.setSelected(true);      
+        //radio  button
+        RadioButton rb2_2 = new RadioButton("Pasted Text");
+        rb2_2.setToggleGroup(inputMethodSelection2);        
+        
+        TextField textFileLocation2 = new TextField();
+        // set the default value of the input textfield
+        textFileLocation2.setText("requested_flight_plans.txt");
+        
+        TextArea requestFlightPlanTextArea = new TextArea();
         
         // button for starting operations
         Label startButtonLabel = new Label("Start Operations: ");
         Button startButton = new Button("Start");
-//        startList.setStyle("-fx-font-size: 12pt;");
 
-
+        // result gui display items
         Label outputResultsLabel = new Label("Results: ");
         Label outputResults = new Label("");
         
-        Label importedBooklistLabel = new Label("Imported Booklist: ");
-        Label importedBooklist = new Label("");
+        
+        
+        //output options
+        Label outputFileNameLabel = new Label("Output Filename: ");
+        TextField outputFileNameTextField = new TextField();
+        outputFileNameTextField.setText("output.txt");
+        
+        
+        
         
         //create Vertical box for algorithm selection radio buttons
         VBox radioButtons1 = new VBox();
         radioButtons1.getChildren().addAll(rb1,rb2);
+        
+        VBox radioButtons2 = new VBox();
+        radioButtons2.getChildren().addAll(rb1_2,rb2_2);
 
+        
+        
         //(x,y) for grid arrangement. Can use this to arrange the radio buttons and other elements
         //contents for getting input type
         
         // input method radiobutton group options (Text File or Pasted Text)
-        menuGrid.add(inputMethodLabel,0,0);
-        menuGrid.add(radioButtons1,1,0);
+        //row 0
+        menuGrid.add(flightDataLabel,0,0);
+        menuGrid.add(requestedPlansLabel,3,0);
         
+        //row 1 
+        menuGrid.add(inputMethodLabel,0,1);
+        menuGrid.add(radioButtons1,1,1);
+        
+        menuGrid.add(inputMethodLabel2,3,1);
+        menuGrid.add(radioButtons2,4,1);
+        
+        //row 2
         //content for inputting textfile location
-        menuGrid.add(textFileLocationLabel,0,2);
+        menuGrid.add(inputFileNameLabel,0,2);
         menuGrid.add(textFileLocation,1,2);
         
+        menuGrid.add(inputFileNameLabel2,3,2);
+        menuGrid.add(textFileLocation2,4,2);
+        
+        //row 3
         //content for inputting text content
-        menuGrid.add(bookPasteLabel,0,3);
-        menuGrid.add(bookPaste,1,3);
+        menuGrid.add(pasteHereLabel,0,3);
+        menuGrid.add(flightDataTextArea,1,3);
         
+        menuGrid.add(pasteHereLabel2,3,3);
+        menuGrid.add(requestFlightPlanTextArea,4,3);
+        //row 4
+        // output textfile settings
+        menuGrid.add(outputFileNameLabel,0,4);
+        menuGrid.add(outputFileNameTextField,1,4);
+        //row 5
         //start gui items
-        menuGrid.add(startButtonLabel,0,4);
-        menuGrid.add(startButton,1,4);
-        
+        menuGrid.add(startButtonLabel,0,5);
+        menuGrid.add(startButton,1,5);
+        //row 6 and 7
         //experiement results
-        menuGrid.add(outputResultsLabel,0,5);
-        menuGrid.add(outputResults,0,6);
-        menuGrid.add(importedBooklistLabel,1,5);
-        menuGrid.add(importedBooklist,1,6);
+        menuGrid.add(outputResultsLabel,0,6);
+        menuGrid.add(outputResults,0,7);
         
         
-        Scene scene = new Scene(menuGrid, 1000, 950);
         
-        primaryStage.setTitle("Project 2 - Kevin Savill");
+        
+        
+        
+        
+        
+        
+        
+        Scene scene = new Scene(menuGrid, 1300, 650);
+        
+        primaryStage.setTitle("Project 3 - Kevin Savill");
         primaryStage.setScene(scene);
         primaryStage.show();
         
@@ -123,25 +186,23 @@ public class Project3 extends Application {
                 // delcare textfileDirectory from filename typed in gui, by default this will be booklist.txt
                 textfileDirectory = textFileLocation.getText();
                 // get the typed in text from the textArea in gui
-                pastedText = bookPaste.getText();
+//                pastedText = bookPaste.getText();
                 System.out.println("Variables initialized and declared, calling beginProcess function");
-                bookString = startFunctions(inputMethod, textfileDirectory, pastedText);
-                System.out.println(bookString);
+//                bookString = startFunctions(inputMethod, textfileDirectory, pastedText);
+//                System.out.println(bookString);
                 // in startFunctions, if there is an issue with getting the text from either the textArea or text file, "Error" will be returned as the string
                 // this if statement, will set the result fields in the gui to "Error" and stop any further functions from being called.
-                if (bookString == "Error") {
-                    outputResults.setText(bookString);
-                    importedBooklist.setText("Error");
-                    return;
-                }
+//                if (bookString == "Error") {
+//                    outputResults.setText(bookString);
+//                    return;
+//                }
                 outputResults.setText("Imported");
                 // update the import field in the gui to the list of books
-                importedBooklist.setText(bookString);
                 System.out.println("Going to pass imported list into book class to create book objects.");
                 // pass the bookString to bookToAVL, this function will also handle creating the book objects, and then inserting to AVLTree
                 // once done, any actions taken in the AVLTree for balancing will be returned as a long string with \n which will then be displayed to the results field in gui.
-                results = bookToAVL(bookString);
-                outputResults.setText(results);
+//                results = bookToAVL(bookString);
+//                outputResults.setText(results);
                 System.out.println("Main Functions complete.");
                 
             }
