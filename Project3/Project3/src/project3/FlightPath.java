@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class FlightPath {
     public static Comparator<FlightPath> byCost = Comparator.comparingDouble(path -> path.cost);
     public static Comparator<FlightPath> byTime = Comparator.comparingInt(path -> path.time);
-
+    
     String origin;
     float cost;
     int time;
@@ -66,12 +66,7 @@ public class FlightPath {
 
     @Override
     public String toString() {
-        return "FlightPath{" +
-                "origin='" + origin + '\'' +
-                ", cost=" + cost +
-                ", time=" + time +
-                ", path=" + path +
-                '}';
+        return "FlightPath{"+"origin='" + origin + '\'' +", cost="+ cost+", time="+ time+", path="+ path+'}';
     }
 
     public void println() {
@@ -86,8 +81,8 @@ public class FlightPath {
             i += 1;
         }
         System.out.printf(". Time: %d Cost: %.2f\n", time, cost);
-//        System.out.println(". Time: " + time + " Cost: " + cost);
     }
+    
     public void printlnToFile(PrintWriter printWriter) {
         printWriter.print(origin);
         int i = 0;
@@ -99,6 +94,5 @@ public class FlightPath {
             i += 1;
         }
         printWriter.printf(". Time: %d Cost: %.2f\n", time, cost);
-//        printWriter.println(". Time: " + time + " Cost: " + cost);
     }
 }

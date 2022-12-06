@@ -11,10 +11,7 @@ public class DestinationLinkedList {
 
     @Override
     public String toString() {
-        return "DestinationLinkedList{" +
-                "origin='" + origin + '\'' +
-                ", flightDataLinkedList=" + flightDataLinkedList +
-                '}';
+        return "DestinationLinkedList{"+"origin='" + origin + '\''+", flightDataLinkedList=" + flightDataLinkedList +'}';
     }
 
     public void add(FlightData flightData) {

@@ -30,8 +30,8 @@ public class FlightData {
         int time = Integer.parseInt(array[3]);
 
         return new FlightData[] {
-                new FlightData(city1, city2, cost, time),
-                new FlightData(city2, city1, cost, time)
+            new FlightData(city1, city2, cost, time),
+            new FlightData(city2, city1, cost, time)
         };
     }
 }

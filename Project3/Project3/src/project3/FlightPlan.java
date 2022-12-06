@@ -37,10 +37,10 @@ public class FlightPlan {
         String origin = array[0];
         String destination = array[1];
         SortBy sortBy = null;
-        switch (array[2]) {
-            case "T" : sortBy = SortBy.TIME;
-            case "C" : sortBy = SortBy.COST;
-            default : { }
+        if(array[2] == "C") {
+            sortBy = SortBy.COST;
+        } else {
+            sortBy = SortBy.TIME;
         }
         return new FlightPlan(origin, destination, sortBy);
     }

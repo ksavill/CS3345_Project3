@@ -6,7 +6,11 @@ Project 3 - Semester Project
  */
 package project3;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import javafx.application.Application;
@@ -48,19 +52,19 @@ public class Project3 extends Application {
         
         //input fields for Flight Data
         
-        ToggleGroup inputMethodSelection = new ToggleGroup();
+        ToggleGroup inputMethodSelection1 = new ToggleGroup();
        
         RadioButton rb1 = new RadioButton("Text File");
-        rb1.setToggleGroup(inputMethodSelection);
+        rb1.setToggleGroup(inputMethodSelection1);
         rb1.setSelected(true);      
         //radio  button
         RadioButton rb2 = new RadioButton("Pasted Text");
-        rb2.setToggleGroup(inputMethodSelection);        
+        rb2.setToggleGroup(inputMethodSelection1);        
         
         
-        TextField textFileLocation = new TextField();
+        TextField textFileLocation1 = new TextField();
         // set the default value of the input textfield
-        textFileLocation.setText("flight_data.txt");
+        textFileLocation1.setText("flight_data.txt");
         
         
         TextArea flightDataTextArea = new TextArea();
@@ -129,7 +133,7 @@ public class Project3 extends Application {
         //row 2
         //content for inputting textfile location
         menuGrid.add(inputFileNameLabel,0,2);
-        menuGrid.add(textFileLocation,1,2);
+        menuGrid.add(textFileLocation1,1,2);
         
         menuGrid.add(inputFileNameLabel2,3,2);
         menuGrid.add(textFileLocation2,4,2);
@@ -154,15 +158,6 @@ public class Project3 extends Application {
         menuGrid.add(outputResultsLabel,0,6);
         menuGrid.add(outputResults,0,7);
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
         Scene scene = new Scene(menuGrid, 1300, 650);
         
         primaryStage.setTitle("Project 3 - Kevin Savill");
@@ -175,101 +170,102 @@ public class Project3 extends Application {
             @Override
             public void handle(ActionEvent event) {
                 // initialize needed variables
-                String inputMethod;
-                String textfileDirectory;
-                String pastedText;
-                String bookString;
+                // variable suffix 1 = FlightPlans
+                // variable suffix 2 = Requested Flight Data
+                String inputMethod1;
+                String inputMethod2;
+                String fileLocation1;
+                String fileLocation2;
+                String pastedText1;
+                String pastedText2;
+                String outputName;
                 String results;
                 
-                // declare inputMethod using current radio selection from gui
-                inputMethod = inputMethodSelection.getSelectedToggle().toString();
-                // delcare textfileDirectory from filename typed in gui, by default this will be booklist.txt
-                textfileDirectory = textFileLocation.getText();
-                // get the typed in text from the textArea in gui
-//                pastedText = bookPaste.getText();
+                //reset outputResult
+                outputResults.setText("");
+                
+                // declare inputMethod's using current radio selection from JavaFX GUI.
+                inputMethod1 = inputMethodSelection1.getSelectedToggle().toString();
+                inputMethod2 = inputMethodSelection2.getSelectedToggle().toString();
+                
+                // declare fileLocation variables
+                fileLocation1 = textFileLocation1.getText();
+                fileLocation2 = textFileLocation2.getText();
+                
+                // declare pastedText variables
+                pastedText1 = flightDataTextArea.getText();
+                pastedText2 = requestFlightPlanTextArea.getText();
+                
+                // declare output filename variable
+                outputName = outputFileNameTextField.getText();
+                
+                // printing variables for debugging
+                System.out.println("Variables: ");
+                System.out.println("inputMethod1 : "+inputMethod1);
+                System.out.println("inputMethod2 : "+inputMethod2);
+                System.out.println("fileLocation1 : "+fileLocation1);
+                System.out.println("fileLocation2 : "+fileLocation2);
+                System.out.println("pastedText1 : "+pastedText1);
+                System.out.println("pastedText2 : "+pastedText2);
+                System.out.println("outputName : "+outputName);
+                
                 System.out.println("Variables initialized and declared, calling beginProcess function");
-//                bookString = startFunctions(inputMethod, textfileDirectory, pastedText);
-//                System.out.println(bookString);
-                // in startFunctions, if there is an issue with getting the text from either the textArea or text file, "Error" will be returned as the string
-                // this if statement, will set the result fields in the gui to "Error" and stop any further functions from being called.
-//                if (bookString == "Error") {
-//                    outputResults.setText(bookString);
-//                    return;
-//                }
-                outputResults.setText("Imported");
-                // update the import field in the gui to the list of books
-                System.out.println("Going to pass imported list into book class to create book objects.");
-                // pass the bookString to bookToAVL, this function will also handle creating the book objects, and then inserting to AVLTree
-                // once done, any actions taken in the AVLTree for balancing will be returned as a long string with \n which will then be displayed to the results field in gui.
-//                results = bookToAVL(bookString);
-//                outputResults.setText(results);
+                outputResults.setText("Variables Initialized and Declared.");
+                
+                // pass declared variables to startFunction.
+                results = startFunctions(inputMethod1,inputMethod2,fileLocation1,fileLocation2,pastedText1,pastedText2,outputName);
+                // check if the result was error and state that in the gui.
+                // Note: this could be problemtatic if somehow a city is named "Error" and throughts a false positive for this check, but in this case
+                // I will assume that is extremely unlikely.
+                if(results.contains("Error")) {
+                    System.out.println(results);
+                    outputResults.setText(results);
+                    return;
+                }
+                
                 System.out.println("Main Functions complete.");
+                outputResults.setText("Completed.");
                 
             }
         });
     }
-
-    /**
-     * @param args the command line arguments
-     */
+    
     public static void main(String[] args) {
         launch(args);
         
     }
     
-    public static String startFunctions(String inputMethod, String textfileDirectory, String pastedText) {
-        // initalize bookstring. I will return this and then pass this string along to a book creator class to handle appending the lines to author, booktitle, and isbn properties respectively
-        // this function is simply for getting the inputs from the gui and getting all 30 lines (although can be variable amount of lines)
-        String bookString;
-        bookString = "";
-        // input validation and getting book list from the text file method
-        if (inputMethod.contains("Text File")) {
-            System.out.println("Input method is Text File.");
-            if(textfileDirectory.length() < 1) {
-                System.out.println("The input method you chose is empty.");
-                bookString = "Error";
-                return bookString;
-            } else {
-                try{
-                    File bookFile = new File(textfileDirectory);
-                    Scanner scanner = new Scanner(bookFile);
-                    int i =0; // count lines
-                    String x;
-                    while (scanner.hasNextLine()) { // goes through all lines in text file
-                       x = scanner.nextLine(); // content of line
-                       if(i!=0){ // if this is not the first line being imported, append a breakline before the next element
-                           bookString = bookString + "\n";
-                       }
-                       bookString = bookString +  x;
-                       i++;
-                    }  
-                } catch(Exception e) {
-                    System.out.println(e);
-                    bookString = "Error";
+    public static String startFunctions(String inputMethod1, String inputMethod2, String fileLocation1, String fileLocation2, String pastedText1, String pastedText2, String outputName) {
+        try {
+            CityAdjacentList cityAdjacentList = new CityAdjacentList(fileLocation1);
+            ArrayList<FlightPlan> flightPlans = FlightPlan.getFromFile(fileLocation2);
+            for (int i = 0; i < flightPlans.size(); i++) {
+                System.out.print("Flight " + (i + 1) + ": ");
+                flightPlans.get(i).output(cityAdjacentList);
+            }
+
+            try {
+                FileWriter fileWriter = new FileWriter(outputName, false);
+                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+                PrintWriter printWriter = new PrintWriter(bufferedWriter);
+                for (int i = 0; i < flightPlans.size(); i++) {
+                    printWriter.print("Flight " + (i + 1) + ": ");
+                    flightPlans.get(i).outputToFile(cityAdjacentList, printWriter);
                 }
+                printWriter.close();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+                return "Error - Output";
             }
-        // input validation and getting book list from the pasted text in gui
-        } else {
-            System.out.println("Input Method is Pasted Text");
-            if(pastedText.length() < 1) {
-                System.out.println("The input method you chose is empty.");
-                bookString = "Error";
-                return bookString;
-            } else {
-                bookString = pastedText;
-            }
+        } catch(Exception e) {
+            System.out.println();
+            return "Error - CityAdjacent or flightPlans";
         }
-        return bookString;
-    }
-    
-    public String bookToAVL(String bookString) {
-        String results = "";
-        // pass bookString to insertBooks function in Book class to be returned the array of book objects
-//        results = Book.insertBooks(bookString);
         
         
         
-        return results;
-    }
-    
+
+        
+        return "";
+    }    
 }
