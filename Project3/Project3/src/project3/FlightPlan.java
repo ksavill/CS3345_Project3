@@ -9,15 +9,18 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class FlightPlan {
+    // Enum for sorting criteria
     enum SortBy {
         COST,
         TIME
     }
 
+    // Fields for origin, destination, and sorting criteria
     String origin;
     String destination;
     SortBy sortBy;
 
+    // Constructor to initialize fields
     public FlightPlan(String origin, String destination, SortBy sortBy) {
         this.origin = origin;
         this.destination = destination;
@@ -26,18 +29,15 @@ public class FlightPlan {
 
     @Override
     public String toString() {
-        return "FlightPlan{" +
-                "origin='" + origin + '\'' +
-                ", destination='" + destination + '\'' +
-                ", sortBy=" + sortBy +
-                '}';
+        return "FlightPlan{origin="+origin+"'\', destination='"+destination+"'\', sortBy="+sortBy+'}';
     }
 
+    // Creates a FlightPlan object from a string array
     public static FlightPlan getFromStringArray(String[] array) {
         String origin = array[0];
         String destination = array[1];
         SortBy sortBy = null;
-        if(array[2] == "C") {
+        if("C".equals(array[2])) {
             sortBy = SortBy.COST;
         } else {
             sortBy = SortBy.TIME;
@@ -45,29 +45,40 @@ public class FlightPlan {
         return new FlightPlan(origin, destination, sortBy);
     }
 
-    public static ArrayList<FlightPlan> getFromFile(String fileName) {
+    // Creates a list of FlightPlan objects from a file or pasted text
+    public static ArrayList<FlightPlan> getFromFile(String fileLocation2,String inputMethod2,String pastedText2) {
         ArrayList<FlightPlan> flightPlans = new ArrayList<>();
-        try {
-            File file = new File(fileName);
-            Scanner scanner = new Scanner(file);
-            int rowCount = Integer.parseInt(scanner.nextLine());
+        if(inputMethod2.contains("Text File")) {
+            try {
+                File file = new File(fileLocation2);
+                Scanner scanner = new Scanner(file);
+                int rowCount = Integer.parseInt(scanner.nextLine());
 
+                for (int i = 0; i < rowCount; i++) {
+                    String[] stringArray = scanner.nextLine().split("\\|");
+                    flightPlans.add(getFromStringArray(stringArray));
+                }
+            } catch (Exception e) {} 
+        } else {
+            Scanner scanner = new Scanner(pastedText2);
+            int rowCount = Integer.parseInt(scanner.nextLine());
             for (int i = 0; i < rowCount; i++) {
                 String[] stringArray = scanner.nextLine().split("\\|");
                 flightPlans.add(getFromStringArray(stringArray));
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
         return flightPlans;
     }
 
+    // Returns all possible flight paths from the origin to the destination
     public ArrayList<FlightPath> getAllPaths(CityAdjacentList cityAdjacentList) {
+        // initialize variables
         MyStack<FlightData> stack = new MyStack<>();
         ArrayList<FlightPath> flightPaths = new ArrayList<>();
         FlightPath flightPath = new FlightPath(origin);
 
         String city = origin;
+        //loop
         while (true) {
             int index = cityAdjacentList.indexOf(city);
             MyLinkedList<FlightData> flightDataLinkedList = cityAdjacentList.getAt(index).flightDataLinkedList;
@@ -95,13 +106,14 @@ public class FlightPlan {
             flightPath.push(stack.peek());
             city = stack.peek().destination;
         }
-
         return flightPaths;
     }
-
-    public void output(CityAdjacentList cityAdjacentList) {
+    // outputs to console and returns as a string
+    public String output(CityAdjacentList cityAdjacentList) {
+        String results = "";
         String sortByString = (sortBy == SortBy.COST) ? "Cost": "Time";
         System.out.println(origin + ", " + destination + " (" + sortByString + ")");
+        results+=origin + ", " + destination + " (" + sortByString + ")\n";
 
         ArrayList<FlightPath> flightPaths = getAllPaths(cityAdjacentList);
         if (!flightPaths.isEmpty()) {
@@ -110,13 +122,18 @@ public class FlightPlan {
 
             int size = Math.min(flightPaths.size(), 3);
             for (int i = 0; i < size; i++) {
+                results += "Path " + (i+1) + ": ";
                 System.out.print("Path " + (i + 1) + ": ");
-                flightPaths.get(i).println();
+                results += flightPaths.get(i).printlnToGUI() + "\n";
+                flightPaths.get(i).println();   
             }
         } else {
             System.out.println("No flight path can be created.");
+            return "No flight path can be created.\n";
         }
+        return results;
     }
+    // outputs the path to target filename
     public void outputToFile(CityAdjacentList cityAdjacentList, PrintWriter printWriter) {
         String sortByString = (sortBy == SortBy.COST) ? "Cost": "Time";
         printWriter.println(origin + ", " + destination + " (" + sortByString + ")");
@@ -137,12 +154,5 @@ public class FlightPlan {
         }
     }
 
-    public static void main(String[] args) {
-        ArrayList<FlightPlan> flightPlans = getFromFile("requested_flight_plans.txt");
-        CityAdjacentList cityAdjacentList = new CityAdjacentList("flight_data.txt");
-        for (int i = 0; i < flightPlans.size(); i++) {
-            System.out.print("Flight " + (i + 1) + ": ");
-            flightPlans.get(i).output(cityAdjacentList);
-        }
-    }
+    
 }

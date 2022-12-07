@@ -35,7 +35,7 @@ public class Project3 extends Application {
         
         //initialize the GridPane and the horizontal and veritcal gap components
         GridPane menuGrid = new GridPane();
-        menuGrid.setHgap(10);
+        menuGrid.setHgap(30);
         menuGrid.setVgap(12);
         
         // Main two labels that will go at top of GUI
@@ -156,7 +156,7 @@ public class Project3 extends Application {
         //row 6 and 7
         //experiement results
         menuGrid.add(outputResultsLabel,0,6);
-        menuGrid.add(outputResults,0,7);
+        menuGrid.add(outputResults,1,6);
         
         Scene scene = new Scene(menuGrid, 1300, 650);
         
@@ -214,17 +214,18 @@ public class Project3 extends Application {
                 
                 // pass declared variables to startFunction.
                 results = startFunctions(inputMethod1,inputMethod2,fileLocation1,fileLocation2,pastedText1,pastedText2,outputName);
+                
                 // check if the result was error and state that in the gui.
                 // Note: this could be problemtatic if somehow a city is named "Error" and throughts a false positive for this check, but in this case
                 // I will assume that is extremely unlikely.
                 if(results.contains("Error")) {
                     System.out.println(results);
                     outputResults.setText(results);
-                    return;
+                } else {
+                    outputResults.setText("Completed\n\n"+results);
                 }
-                
                 System.out.println("Main Functions complete.");
-                outputResults.setText("Completed.");
+                
                 
             }
         });
@@ -236,14 +237,11 @@ public class Project3 extends Application {
     }
     
     public static String startFunctions(String inputMethod1, String inputMethod2, String fileLocation1, String fileLocation2, String pastedText1, String pastedText2, String outputName) {
+        String results = "";
         try {
-            CityAdjacentList cityAdjacentList = new CityAdjacentList(fileLocation1);
-            ArrayList<FlightPlan> flightPlans = FlightPlan.getFromFile(fileLocation2);
-            for (int i = 0; i < flightPlans.size(); i++) {
-                System.out.print("Flight " + (i + 1) + ": ");
-                flightPlans.get(i).output(cityAdjacentList);
-            }
-
+            CityAdjacentList cityAdjacentList = new CityAdjacentList(fileLocation1, inputMethod1, pastedText1);
+            ArrayList<FlightPlan> flightPlans = FlightPlan.getFromFile(fileLocation2, inputMethod2, pastedText2);
+            // output to file.
             try {
                 FileWriter fileWriter = new FileWriter(outputName, false);
                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -251,21 +249,23 @@ public class Project3 extends Application {
                 for (int i = 0; i < flightPlans.size(); i++) {
                     printWriter.print("Flight " + (i + 1) + ": ");
                     flightPlans.get(i).outputToFile(cityAdjacentList, printWriter);
+                    printWriter.print("\n");
                 }
                 printWriter.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
-                return "Error - Output";
+                return "Error - Output"; // return string if there is an error writing
+            }
+            // Output flight plan details to the console and add to results string before returning.
+            for (int i = 0; i < flightPlans.size(); i++) {
+                System.out.print("Flight " + (i + 1) + ": ");
+                results += "Flight " + (i + 1) + ": ";
+                results += flightPlans.get(i).output(cityAdjacentList)+"\n";
+                System.out.println("");
             }
         } catch(Exception e) {
-            System.out.println();
-            return "Error - CityAdjacent or flightPlans";
+            return "Error - CityAdjacent or flightPlans"; // return error string if there is an error in general.
         }
-        
-        
-        
-
-        
-        return "";
+        return results;
     }    
 }
